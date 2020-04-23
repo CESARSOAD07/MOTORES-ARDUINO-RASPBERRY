@@ -4,6 +4,12 @@ RASPBERRY
 
 import serial
 import time
+import curses
+
+screen = curses.inistscr()
+curses.noecho()
+curses.cbreak()
+screen.keypad(True)
 
 ser = serial.Serial("/dev/ttyACM0", 9600, timeout = 1)
 
@@ -13,18 +19,44 @@ def driveMotor(drct1, drct2):
     ser.write(sendStr.encode('utf-8'))
     time.sleep(0.1)
 
-while 1:
-        print("Direccion1 = ")
-        drct1 = input()
-        print("Direccion2 = ")
-        drct2 = input()
+try:
+       while True:
+                  char = screen.geth()
+                   if char == ord('q'):
+                        drct1 = 0
+                        drct2 = 0
+                        print('0')
+                    elif char == curses.KEY_RIGHT:
+                        drct1 =2
+                        drct2 = 2
+                        print('DERECHA')
+                     elif char == curses.KEY_LEFT:
+                        drct1 = -2
+                        drct2 = -2
+                        print('IZQUIERDA')
+                     elif char == curses.KEY_UP:
+                        drct1 = 1
+                        drct2 = 1
+                        print('ADELATE')
+                      elif char == curses.KEY_DOWN:
+                        drct1 = -1
+                        drct2 = -1
+                        print('ATRAS')
 
-        driveMotor(drct1,drct2)
+            
+                       driveMotor(drct1,drct2)
+        
+finally: 
+        curses:nocbreak();
+        screen.keypad(0);
+        curses.echo()
+        curse.endwin()
+        
         
      
   ARDUINO
   
-  int in1 = 5;
+int in1 = 5;
 int in2 = 4;
 int in3 = 3;
 int in4 = 2;
@@ -84,7 +116,15 @@ void loop() {
   if(drct1Val == 0 && drct2Val == 0){
     Apagado1();
     Apagado2();
-   }  
+   }
+  if(drct1Val == 2 && drct2Val == 2){
+    Motor1a();
+    Motor2b();
+    }  
+   if(drct1Val == -2 && drct2Val == -2){
+    Motor1b();
+    Motor2a();
+    }
 }
 
 void Motor1a(){
